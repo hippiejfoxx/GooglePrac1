@@ -9,34 +9,88 @@ namespace GooglePracExercise1
     {
         public int NumberOfSwitches { get; set; }
         public int NumberOfOutlets { get; set; }
-        public List<string> currentState { get; set; }
+        public List<string> masterState { get; set; }
         public List<string> neededState { get; set; }
 
-        public void Run()
+        public int Run()
         {
-            foreach (var curr in currentState)
+            List<string> temp = new List<string>(masterState);
+            List<int> answers = new List<int>();
+            List<int> used = new List<int>();
+
+            findAnswer(temp, answers, used);
+
+            if (answers.Count <= 0)
+                return -1;
+
+            return answers.Min();
+        }
+
+        public void findAnswer(List<string> currentState, List<int> answers, List<int> used)
+        {
+            List<string> master = new List<string>(currentState);
+            int index = 0;
+
+            if(!(answers.Any() && answers.Min() < used.Count))
             {
-                var not = Not(curr);
+                if (powerMatch(currentState, neededState))
+                {
+                    answers.Add(used.Count);
+                }
+
+                while (index < NumberOfSwitches)
+                {
+                    List<int> tempUsed = new List<int>(used);
+                    tempUsed.Add(index);
+                    findAnswer(Not(master, index), answers, tempUsed);
+                    ++index;
+                }
             }
         }
 
-        private string Not(string inString)
+        private List<string> Not(List<string> inString, int index)
         {
-            List<char> newStringList = new List<char>();
-            foreach(var currChar in inString)
+            List<string> newStrings = new List<string>();
+            
+            foreach (var str in inString)
             {
-                if (currChar == '0')
+                List<char> newStringList = new List<char>();
+                for (int i = 0; i < str.Length; i++)
                 {
-                    newStringList.Add('1');
-                }
+                    if (i == index)
+                    {
+                        if (str[i] == '0')
+                        {
+                            newStringList.Add('1');
+                        }
 
-                if (currChar == '1')
+                        if (str[i] == '1')
+                        {
+                            newStringList.Add('0');
+                        }
+                    }
+                    else
+                    {
+                        newStringList.Add(str[i]);
+                    }
+                }
+                newStrings.Add(new String(newStringList.ToArray()));
+            }
+
+            return newStrings;
+        }
+
+        private bool powerMatch(List<string> current, List<string> target)
+        {
+            foreach (var test in current)
+            {
+                if (!target.Contains(test))
                 {
-                    newStringList.Add('0');
+                    return false;
                 }
             }
 
-            return new string(newStringList.ToArray());
+            return true;
         }
     }
 }

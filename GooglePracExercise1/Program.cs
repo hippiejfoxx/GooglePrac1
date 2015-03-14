@@ -11,7 +11,7 @@ namespace GooglePracExercise1
         static void Main(string[] args)
         {
             List<Problem> problemList = new List<Problem>();
-            using (var stream = new StreamReader(new FileStream(@"C:\temp\Google\A-small-practice.in", FileMode.Open)))
+            using (var stream = new StreamReader(new FileStream(@"D:\temp\Google\A-small-practice.in", FileMode.Open)))
             {
                 var numCases = int.Parse(stream.ReadLine());
 
@@ -23,19 +23,27 @@ namespace GooglePracExercise1
                     prob.NumberOfOutlets = int.Parse(caseInfo[0]);
                     prob.NumberOfSwitches = int.Parse(caseInfo[1]);
 
-                    prob.currentState = stream.ReadLine().Split(' ').ToList();
+                    prob.masterState = stream.ReadLine().Split(' ').ToList();
                     prob.neededState = stream.ReadLine().Split(' ').ToList();
 
                     problemList.Add(prob);
                 }
             }
 
-            foreach (var pro in problemList)
+            for (int i = 0; i < problemList.Count; i++)
             {
-                pro.Run();
+                var res = problemList[i].Run();
+                if (res >= 0)
+                {
+                    Console.WriteLine("Case #{0}: " + res, i + 1);
+                }
+                else
+                {
+                    Console.WriteLine("Case #{0}: NOT POSSIBLE", i + 1);
+                }
             }
 
-            var ere = 1;
+            Console.ReadLine();
         }
     }
 }
